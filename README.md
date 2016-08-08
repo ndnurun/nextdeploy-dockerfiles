@@ -1,2 +1,2 @@
 # nextdeploy-dockerfiles
-Dockerfiles used on NextDeploy projects
+Dockerfiles used on NextDeploy
