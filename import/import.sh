@@ -193,7 +193,7 @@ importsql() {
     ncftpget -u $FTPUSER -p $FTPPASSWD $FTPHOST . dump/${branchname}_${PATHURI}*.sql.gz 2>/dev/null
   fi
 
-  sqlfiles="$(ls *.sql.gz)"
+  sqlfiles="$(ls *.sql.gz 2>/dev/null)"
   for sqlf in ${sqlfiles[@]}; do
     dbname="${sqlf#*_}"
     dbname="${dbname%%.sql.gz}"
@@ -228,7 +228,7 @@ importmongo() {
 
   if (( $? == 0 )); then
     # take the first one
-    mongofile="$(ls *.tar.gz | head -n 1 | sed "s;.tar.gz;;" | tr -d "\n")"
+    mongofile="$(ls *.tar.gz 2>/dev/null | head -n 1 | sed "s;.tar.gz;;" | tr -d "\n")"
     tar xvfz ${mongofile}.tar.gz
     rm -f *.tar.gz
     mongofolder="$(ls)"
@@ -262,7 +262,7 @@ assetsarchive() {
 
   if (( $? == 0 )); then
     # take the first one
-    archivefile="$(ls *.tar.gz | head -n 1 | tr -d "\n")"
+    archivefile="$(ls *.tar.gz 2>/dev/null | head -n 1 | tr -d "\n")"
     tar xvfz "$archivefile" >/dev/null 2>&1
     rm -f "$archivefile"
     if (( $? == 0 )); then
