@@ -109,7 +109,7 @@ postdrupal() {
 
   # if sql or mongo import, updb and cc
   pushd ${DOCROOT} > /dev/null
-  drush -y cim 2>/dev/null
+  drush -y cim >/dev/null 2>&1
   drush updb -y
   drush -y cc all 2>/dev/null
   (( $? != 0 )) && drush -y cr
@@ -199,8 +199,8 @@ importsql() {
     dbname="${dbname%%.sql.gz}"
 
     echo "create database ${dbname} character set=utf8 collate=utf8_unicode_ci" | mysql -u root -p8to9or1 -h mysql_${PROJECTNAME} >/dev/null 2>&1
-    echo "grant all privileges on ${dbname}.* to s_bdd@'%' identified by 's_bdd'" | mysql -u root -p8to9or1 -h mysql_${PROJECTNAME} >/dev/null 2>&1
-    zcat "$sqlf" | mysql -u s_bdd -ps_bdd $dbname -h mysql_${PROJECTNAME}
+    #echo "grant all privileges on ${dbname}.* to s_bdd@'%' identified by 's_bdd'" | mysql -u root -p8to9or1 -h mysql_${PROJECTNAME} >/dev/null 2>&1
+    zcat "$sqlf" | mysql -u root -p8to9or1 $dbname -h mysql_${PROJECTNAME}
     (( $? != 0 )) && ret=1
   done
   popd > /dev/null
