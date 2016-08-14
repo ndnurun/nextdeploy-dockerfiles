@@ -7,10 +7,11 @@ FRAMEWORK=''
 FTPUSER=''
 FTPPASSWD=''
 URI=''
-BRANCHS=('default')
+BRANCHS=("$(git rev-parse --abbrev-ref HEAD | tr -d "\n")")
 FTPHOST='nextdeploy'
 PATHURI="server"
 DOCROOT="$(pwd)/"
+PROJECTNAME=""
 
 # display helpn all of this parametes are setted during vm install
 posthelp() {
@@ -27,6 +28,7 @@ Usage: $0 [options]
 --ismongo x       1/0 if mysql-server present (default is 0)
 --branchs xxxx    set branch(s) destination for export
 --uri xxxx        uri of the website
+--projectname xxx identified project
 EOF
 
 exit 0
@@ -79,6 +81,11 @@ while (($# > 0)); do
     --branchs)
       shift
       BRANCHS="$*"
+      shift
+      ;;
+    --projectname)
+      shift
+      PROJECTNAME="$1"
       shift
       ;;
     -h)
@@ -158,8 +165,8 @@ exportsql() {
   mkdir /tmp/dump
 
   pushd /tmp/dump > /dev/null
-  echo "show databases" | mysql -u s_bdd -ps_bdd | grep -v -e "^Database$" | grep -v -e "^information_schema$" | grep "${PATHURI}" | while read dbname; do
-    mysqldump -u s_bdd -ps_bdd $dbname > ${dbname}.sql
+  echo "show databases" | mysql -u root -p8to9or1 -h mysql_${PROJECTNAME} | grep -v -e "^Database$" | grep -v -e "^information_schema$" | grep "${PATHURI}" | while read dbname; do
+    mysqldump -u root -p8to9or1 -h mysql_${PROJECTNAME} $dbname > ${dbname}.sql
     [[ "$FRAMEWORK" = 'wordpress'* ]] && sed -i "s;$URI;ndwpuri;g" ${dbname}.sql
     gzip ${dbname}.sql
 
@@ -185,7 +192,7 @@ exportmongo() {
 
   pushd /tmp/dump > /dev/null
   echo "show dbs" | mongo --quiet | grep -v "local" | grep "${PATHURI}" | sed "s; .*$;;" | while read dbname; do
-    mongodump --db $dbname
+    mongodump --db $dbname --host mongodb_${PROJECTNAME}
     pushd dump >/dev/null
     tar cvfz ${dbname}.tar.gz $dbname
     for branch in ${BRANCHS[@]}; do
