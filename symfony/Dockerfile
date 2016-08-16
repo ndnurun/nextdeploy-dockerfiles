@@ -27,8 +27,13 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -y libpng12-dev libbz2-dev li
 RUN DEBIAN_FRONTEND=noninteractive ln -fs /usr/lib/x86_64-linux-gnu/libldap.so /usr/lib/ \
 && docker-php-ext-configure gd --with-png-dir=/usr --with-jpeg-dir=/usr \
 && docker-php-ext-install gd mbstring pdo pdo_mysql \
-&& docker-php-ext-install curl ldap mcrypt xmlrpc intl xsl tidy \
+&& docker-php-ext-install curl ldap mcrypt xmlrpc intl xsl tidy bcmath \
 && rm -r /var/lib/apt/lists/*
+
+# APC
+RUN pear config-set php_ini /usr/local/etc/php/php.ini
+RUN pecl config-set php_ini /usr/local/etc/php/php.ini
+RUN pecl install apcu-4.0.11
 
 # Install wkhtmltopdf
 RUN DEBIAN_FRONTEND=noninteractive wget http://download.gna.org/wkhtmltopdf/0.12/0.12.3/wkhtmltox-0.12.3_linux-generic-amd64.tar.xz
@@ -36,10 +41,6 @@ RUN DEBIAN_FRONTEND=noninteractive tar xvf wkhtmltox-0.12.3_linux-generic-amd64.
 RUN DEBIAN_FRONTEND=noninteractive mv wkhtmltox/bin/wkhtmltopdf /usr/bin/
 RUN DEBIAN_FRONTEND=noninteractive rm -rf wkhtmltox
 RUN DEBIAN_FRONTEND=noninteractive rm -f wkhtmltox-0.12.3_linux-generic-amd64.tar.xz
-
-# Ensure php modules are enabled
-#RUN rm -rf /usr/local/etc/php/conf.d
-#RUN cp -rf /etc/php5/mods-available /usr/local/etc/php/conf.d
 
 # Ensure that php can write sessions into the container
 RUN chmod 777 /var/lib/php5
