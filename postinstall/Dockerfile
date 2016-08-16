@@ -17,8 +17,13 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -y libpng12-dev libbz2-dev li
 RUN DEBIAN_FRONTEND=noninteractive ln -fs /usr/lib/x86_64-linux-gnu/libldap.so /usr/lib/ \
 && docker-php-ext-configure gd --with-png-dir=/usr --with-jpeg-dir=/usr \
 && docker-php-ext-install gd mbstring pdo pdo_mysql \
-&& docker-php-ext-install curl ldap mcrypt xmlrpc intl xsl tidy \
+&& docker-php-ext-install curl ldap mcrypt xmlrpc intl xsl tidy bcmath \
 && rm -r /var/lib/apt/lists/*
+
+# APC
+RUN pear config-set php_ini /usr/local/etc/php/php.ini
+RUN pecl config-set php_ini /usr/local/etc/php/php.ini
+RUN pecl install apcu-4.0.11
 
 # ensure drush can be executed by all
 #RUN mv /root/composer /opt
