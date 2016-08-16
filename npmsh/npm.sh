@@ -10,7 +10,8 @@ pushd $DOCROOT >/dev/null
 find . -maxdepth 6 -name package.json | grep -v "vendor" | grep -v "node_modules" | while read GFILE; do
   pushd "${GFILE%/*}" >/dev/null
   [[ "$ISRESET" = "true" ]] && rm -rf node_modules
-  npm install
+  npm config set spin false
+  npm install -q
   grep '"build"' package.json >/dev/null 2>&1 && npm run build
   popd >/dev/null
 done
