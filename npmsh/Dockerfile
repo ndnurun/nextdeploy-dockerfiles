@@ -2,6 +2,9 @@ FROM iojs
 MAINTAINER Eric Fehr ricofehr@nextdeploy.io
 LABEL description="NextDeploy npmsh command"
 
+# install bower and gulp
+RUN npm install -q -g grunt grunt-cli bower gulp
+
 # copy import script
 COPY npm.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/npm.sh
