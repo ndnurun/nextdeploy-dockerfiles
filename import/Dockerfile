@@ -45,8 +45,13 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -y mysql-client mongodb-org-s
 RUN DEBIAN_FRONTEND=noninteractive ln -fs /usr/lib/x86_64-linux-gnu/libldap.so /usr/lib/ \
 && docker-php-ext-configure gd --with-png-dir=/usr --with-jpeg-dir=/usr \
 && docker-php-ext-install gd mbstring pdo pdo_mysql \
-&& docker-php-ext-install curl ldap mcrypt xmlrpc intl xsl tidy \
+&& docker-php-ext-install curl ldap mcrypt xmlrpc intl xsl tidy bcmath \
 && rm -r /var/lib/apt/lists/*
+
+# APC
+RUN pear config-set php_ini /usr/local/etc/php/php.ini
+RUN pecl config-set php_ini /usr/local/etc/php/php.ini
+RUN pecl install apcu-4.0.11
 
 # install wp
 RUN cd /usr/local/bin && curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && chmod +x wp-cli.phar && mv wp-cli.phar wp
