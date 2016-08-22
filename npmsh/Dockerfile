@@ -3,7 +3,9 @@ MAINTAINER Eric Fehr ricofehr@nextdeploy.io
 LABEL description="NextDeploy npmsh command"
 
 # install bower and gulp
-RUN npm install -q -g grunt grunt-cli bower gulp
+RUN npm install -q -g grunt-cli bower gulp
+RUN npm cache clean
+RUN npm update -g
 
 # copy import script
 COPY npm.sh /usr/local/bin/
