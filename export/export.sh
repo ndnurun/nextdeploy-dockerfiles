@@ -113,7 +113,12 @@ postdrupal() {
 # symfony actions
 postsymfony2() {
   # decompress assets archive
-  assetsarchive "${DOCROOT}/web/uploads"
+  if [[ -d "${DOCROOT}/web/uploads" ]]; then
+    assetsarchive "${DOCROOT}/web/uploads"
+  elif [[ -d "${DOCROOT}/web/upload" ]]; then
+    assetsarchive "${DOCROOT}/web/upload"
+  fi
+
   (( $? != 0 )) && echo "No assets archive or corrupt file"
 
   # export datas
