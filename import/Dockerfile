@@ -1,4 +1,4 @@
-FROM drush/drush
+FROM debian:jessie
 MAINTAINER Eric Fehr ricofehr@nextdeploy.io
 LABEL description="NextDeploy import command"
 
@@ -30,7 +30,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update -y --force-yes
 RUN DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -y --force-yes
 
 # Install prerequis
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -y wget curl git sudo libxrender-dev libfontconfig1-dev libxext-dev mysql-client php-pear
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y wget curl git sudo libxrender-dev libfontconfig1-dev libxext-dev mysql-client
 
 # Install libraries for php extensions
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y libpng12-dev libbz2-dev libjpeg62-turbo-dev  libjpeg-dev libpq-dev libcurl4-openssl-dev libldap2-dev libicu-dev libxml2-dev libmcrypt-dev libxslt-dev libtidy-dev libfreetype6-dev
@@ -40,26 +40,6 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -y ncftp
 
 # install mysql and mongo client
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y mysql-client mongodb-org-shell mongodb-org-tools
-
-# Install php extensions
-RUN DEBIAN_FRONTEND=noninteractive ln -fs /usr/lib/x86_64-linux-gnu/libldap.so /usr/lib/ \
-&& docker-php-ext-configure gd --with-png-dir=/usr --with-jpeg-dir=/usr \
-&& docker-php-ext-install gd mbstring pdo pdo_mysql \
-&& docker-php-ext-install curl ldap mcrypt xmlrpc intl xsl tidy bcmath \
-&& rm -r /var/lib/apt/lists/*
-
-# APC
-RUN pear config-set php_ini /usr/local/etc/php/php.ini
-RUN pecl config-set php_ini /usr/local/etc/php/php.ini
-RUN pecl install apcu-4.0.11
-
-# install wp
-RUN cd /usr/local/bin && curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && chmod +x wp-cli.phar && mv wp-cli.phar wp
-
-# Memory Limit
-RUN echo "memory_limit=1024M" > /usr/local/etc/php/conf.d/memory-limit.ini
-# Time Zone
-RUN echo "date.timezone=${PHP_TIMEZONE:-UTC}" > /usr/local/etc/php/conf.d/date_timezone.ini
 
 # launch drush with www-data user
 RUN usermod -u 1000 www-data

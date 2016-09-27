@@ -113,14 +113,6 @@ postdrupal() {
 
   # import data
   importdatas
-
-  # if sql or mongo import, updb and cc
-  pushd ${DOCROOT} > /dev/null
-  drush -y cim >/dev/null 2>&1
-  drush updb -y
-  drush -y cc all 2>/dev/null
-  (( $? != 0 )) && drush -y cr
-  popd > /dev/null
 }
 
 # symfony actions
@@ -136,29 +128,21 @@ postsymfony2() {
 
   # import data
   importdatas
-
-  # if sql or mongo import, updb and cc
-  pushd ${DOCROOT} > /dev/null
-  php app/console doctrine:schema:update --force
-  php app/console cache:clear --env=prod
-  php app/console cache:clear --env=dev
-  popd > /dev/null
 }
 
 # wordpress actions
 postwordpress() {
   # decompress assets archive
-  assetsarchive "${DOCROOT}/wp-content/uploads"
+  if [[ -d "${DOCROOT}/git-wp-content/uploads" ]]; then
+    assetsarchive "${DOCROOT}/git-wp-content/uploads"
+  else
+    assetsarchive "${DOCROOT}/wp-content/uploads"
+  fi
+
   (( $? != 0 )) && echo "No assets archive or corrupt file"
 
   # import data
   importdatas
-
-  # if sql or mongo import, updb and cc
-  pushd ${DOCROOT} > /dev/null
-  wp search-replace --all-tables 'ndwpuri' "${URI}" >/dev/null 2>&1
-  wp user update 1 --user_pass=$FTPPASSWD
-  popd > /dev/null
 }
 
 # static actions
