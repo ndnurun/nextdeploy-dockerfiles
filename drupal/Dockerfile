@@ -27,6 +27,12 @@ RUN DEBIAN_FRONTEND=noninteractive ln -fs /usr/lib/x86_64-linux-gnu/libldap.so /
 && docker-php-ext-install gd mbstring pdo pdo_mysql \
 && docker-php-ext-install curl ldap mcrypt xmlrpc intl xsl tidy
 
+# Mongo
+RUN pear config-set php_ini /usr/local/etc/php/php.ini
+RUN pecl config-set php_ini /usr/local/etc/php/php.ini
+RUN /usr/bin/yes '' | /usr/bin/pecl install --force mongo-1.5.8
+RUN echo 'extension=mongo.so' > /usr/local/etc/php/conf.d/mongo.ini
+
 # Install php imagick extension
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y libmagickwand-dev --no-install-recommends \
 && rm -rf /var/lib/apt/lists/*

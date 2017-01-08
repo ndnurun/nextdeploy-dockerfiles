@@ -28,6 +28,11 @@ RUN pecl install imagick && docker-php-ext-enable imagick
 RUN pear config-set php_ini /usr/local/etc/php/php.ini
 RUN pecl config-set php_ini /usr/local/etc/php/php.ini
 RUN pecl install apcu-4.0.11
+RUN echo 'extension=apcu.so' > /usr/local/etc/php/conf.d/apcu.ini
+
+# Mongo
+RUN /usr/bin/yes '' | /usr/bin/pecl install --force mongo-1.5.8
+RUN echo 'extension=mongo.so' > /usr/local/etc/php/conf.d/mongo.ini
 
 # Memory Limit
 RUN echo "memory_limit=1024M" > /usr/local/etc/php/conf.d/memory-limit.ini
