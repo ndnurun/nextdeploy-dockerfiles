@@ -14,7 +14,7 @@ pushd $DOCROOT >/dev/null
 (( $? != 0 )) && exit 1
 find . -maxdepth 6 -name composer.json | grep -v "vendor" | while read GFILE; do
   pushd "${GFILE%/*}" >/dev/null
-  if [[ -f composer.lock ]] || [[ "$PWD" =~ ^.*/html.*$ ]]; then
+  if [[ -f composer.lock ]] || [[ "$PWD" = "$DOCROOT" ]]; then
     [[ "$ISRESET" = "true" ]] && rm -rf vendor
     [[ -f composer.phar ]] && rm -f composer.phar
     curl -sS https://getcomposer.org/installer | php
@@ -22,6 +22,9 @@ find . -maxdepth 6 -name composer.json | grep -v "vendor" | while read GFILE; do
     # if composer fails, sometimes is caused by github rates, sleep and try again
     (( $? != 0 )) && sleep 20 && php composer.phar install -n --prefer-dist
     rm -f composer.phar
+    # weird execution issue with drush local-site install
+    [[ -f vendor/bin/drush.launcher ]] && chmod +x vendor/bin/drush.launcher
+    [[ -f vendor/drush/drush/drush.launcher ]] && chmod +x vendor/drush/drush/drush.launcher
   fi
   popd >/dev/null
 done
