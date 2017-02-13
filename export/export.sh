@@ -246,7 +246,7 @@ assetsarchive() {
       # test if default exist
       echo "ls assets/" | ncftp -u $FTPUSER -p $FTPPASSWD $FTPHOST | grep default_assets.tar.gz
       if (( $? != 0 )); then
-        mv $assets.tar.gz default_assets.tar.gz
+        mv assets.tar.gz default_${PATHURI}_assets.tar.gz
         ncftpput -S .tmp -u $FTPUSER -p $FTPPASSWD $FTPHOST assets/ default_assets.tar.gz
       fi
     else
